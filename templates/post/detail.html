@@ -1,0 +1,67 @@
+{% extends "post/base.html" %}
+{% load blog_tags %}
+{% block title %}
+{{post.title}}
+{% endblock  %}
+{% block content %}
+
+<h1>{{post.title}}</h1>
+<img src="{{ post.imagefield.url }}" alt="Post Image">
+<p class="date">
+    Published {{ post.Published }} by {{ post.author }}
+</p>
+{{ post.body|markdown }}
+<P>
+    <a href="{% url 'blogs:post_share' post_id=post.id %}">
+        share this post
+    </a>
+</P>
+{% with comment.count as total_comments %}
+<h2>
+    {{total_comments}} comment {{total_comments|pluralize}}
+</h2>
+{% endwith %}
+<h2>Similar posts</h2>
+{% for post in similar_posts %}
+<p>
+    <a href="{{post.get_absolute_url}}">{{post.title}}</a>
+</p>
+{% empty %}
+There is no similar post yet!
+{% endfor %}
+{% for comment in comments %}
+
+<div class="comment">
+    <p class="info">
+        Comment {{forloop.counter}} by {{ comment.name }}
+        {{ comment.body }}
+    </p>
+</div>
+{% empty %}
+<p>There is no comment added</p>
+{% endfor %}
+{% if new_comment %}
+<h2>Your comment has been added</h2>
+{% else %}
+<div class="card" method="POST">
+    {% csrf_token %}
+    <span class="title">Leave a Comment</span>
+    <form class="form">
+        <div class="group">
+            {{comment_form.name}}
+            <label for="name">Name</label>
+        </div>
+        <div class="group">
+            {{comment_form.email}}
+            <label for="email">Email</label>
+        </div>
+        <div class="group">
+            {{comment_form.body}}
+            <label for="comment">Comment</label>
+        </div>
+        <button type="submit" value="Add comment">Submit</button>
+    </form>
+</div>
+
+{% endif %}
+{% endblock  %}

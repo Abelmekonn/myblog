@@ -1,0 +1,50 @@
+{% load blog_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/my_style.css' %}">
+    <link rel="stylesheet" href="">
+</head>
+<body>
+    <div class="header-bar">
+        {% if request.user.is_authenticated %}
+            <div class="logo">
+                <h1>Hello {{request.user|title}}</h1>
+                <h3>You have <i>{{count}}</i> incomplete task{{ count|pluralize:"s" }}</h3>
+            </div>
+            <a href="/logout"><button class="btn btn-primary">Log Out</button></a>
+        {% else %}
+            <div class="logo">
+                <h1><a href="/login">Login</a></h1>
+            </div>
+        {% endif %}
+    </div>
+    <a class="btn btn-primary" href="">&#x2b;</a>
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+    <h3>Most commented posts</h3>
+    {% get_most_commented_posts as most_commented_posts %}
+    <ul>
+        {% for post in most_commented_posts %}
+        <li>
+            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <p>I have created {% my_blogs %}</p>
+    {% comment %} <div>
+        <p>
+            <a href="{% url "blogs:post_feed" %}">Subscribe to my RSS feed</a>
+        </p>
+    </div> {% endcomment %}
+    <script src="" async defer></script>
+</body>
+</html>
